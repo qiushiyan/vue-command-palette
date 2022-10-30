@@ -150,10 +150,9 @@ input:focus {
     left: 0;
     width: 100%;
     height: 100vh;
-    background-color: black;
-    opacity: 0.6;
-    z-index: 999;
+    background-color: rgba(0, 0, 0, 0.6);
 }
+
 
 .command-palette {
     position: relative;
@@ -161,31 +160,6 @@ input:focus {
     max-height: 80%;
     margin-top: 50px;
 }
-
-
-/* .command-key {
-    display: flex;
-    align-items: center;
-    border: 0;
-    width: 20px;
-    border-radius: 2px;
-    padding: 0 0 1px;
-    margin-right: 0.4em;
-
-    align-items: center;
-    /* background: #90a4b7;
-    border-radius: 2px;
-    box-shadow: #6a97c2;
-    display: flex;
-    height: 18px;
-    justify-content: center;
-    margin-right: .4em;
-    padding: 0 0 1px;
-    color: #90a4b7;
-    border: 0;
-    width: 20px;
-}
-*/
 
 
 .is-hovered {
