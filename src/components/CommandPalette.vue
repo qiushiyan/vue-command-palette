@@ -1,11 +1,10 @@
 <script setup lang = 'ts'>
 import { useMagicKeys, whenever } from '@vueuse/core';
-import { nextTick, ref, watch } from "vue";
+import { nextTick, ref } from "vue";
 import { useCommandStore } from "../stores/CommandStore";
 
 const commandStore = useCommandStore();
 const searchBar = ref<HTMLInputElement | null>(null)
-const searchBarFocused = ref(false)
 
 const handleInput = (e: Event) => {
     commandStore.setCommandFilterText((e.target as HTMLInputElement).value)
@@ -14,16 +13,11 @@ const handleInput = (e: Event) => {
 const keys = useMagicKeys()
 const CtrlShiftP = keys["ctrl+shift+p"]
 
-watch(commandStore, async () => {
-    if (commandStore.commandPaletteVisible && !searchBarFocused.value) {
-        await nextTick()
-        searchBar.value?.focus()
-        searchBarFocused.value = true
-    }
-})
 
-whenever(CtrlShiftP, () => {
+whenever(CtrlShiftP, async () => {
     commandStore.toggleCommandPalette()
+    await nextTick()
+    searchBar.value?.focus()
 })
 
 whenever(keys.down, () => {
@@ -38,40 +32,78 @@ whenever(keys.up, () => {
     }
 })
 
+whenever(keys.enter, () => {
+    if (commandStore.commandPaletteVisible) {
+        commandStore.executeActiveCommand()
+    }
+})
+
+whenever(keys.escape, () => {
+    if (commandStore.commandPaletteVisible) {
+        commandStore.toggleCommandPalette()
+        commandStore.setCommandFilterText("")
+    }
+})
+
 </script>
 
 <template>
     <Teleport to="body">
-        <div class="w-6/12 m-auto" v-show="commandStore.commandPaletteVisible">
-            <h2 class="text-white text-2xl">command palette</h2>
-            <div class="relative w-full">
-                <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                    <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor"
-                        viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                            clip-rule="evenodd"></path>
-                    </svg>
+        <div class="command-palette-overlay " v-show="commandStore.commandPaletteVisible">
+            <section class="command-palette rounded-xl w-6/12 m-auto bg-white text-gray-900 p-1">
+                <div class="relative w-full">
+                    <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                        <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor"
+                            viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <input type="text" id="search" :value="commandStore.commandFilterText" @input="handleInput"
+                        ref="searchBar" class=" border border-gray-300 text-sm block w-full pl-10 p-2.5 text-white "
+                        placeholder="Search for commands here" autocomplete="off">
                 </div>
-                <input type="text" id="search" :value="commandStore.commandFilterText" @input="handleInput"
-                    ref="searchBar"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Search" required>
-            </div>
-            <div class="commands">
-                <ul>
-                    <li v-for="(command, idx) in commandStore.filteredCommandList" :key="command.id" class="rounded p-2"
-                        :class="commandStore.activeIdx === idx ? 'is-hovered' : ''">
-                        {{ command.title }}</li>
-                </ul>
-            </div>
+                <div class="commands">
+                    <ul class="bg-white">
+                        <li v-for="(command, idx) in commandStore.filteredCommandList" :key="command.id"
+                            class="p-2 text-left" :class="commandStore.activeIdx === idx ? 'is-hovered' : ''">
+                            {{ command.title }}</li>
+                    </ul>
+                </div>
+            </section>
         </div>
+
     </Teleport>
 
 </template>
 
 <style scoped>
+input:focus {
+    border-color: #FFD859
+}
+
+.command-palette-overlay {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: black;
+    opacity: 0.6;
+    z-index: 999;
+}
+
+.command-palette {
+    position: relative;
+    width: 60%;
+    max-height: 80%;
+    margin-top: 50px;
+}
+
 .is-hovered {
-    background-color: #4a5568;
+    background-color: #7686a1;
 }
 </style>

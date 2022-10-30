@@ -1,16 +1,14 @@
 import { defineStore } from "pinia";
+import { v4 as uuid } from "uuid";
+import { Command, ICommand } from "../models/command";
 
 export const useCommandStore = defineStore("CommandPalette", {
   state: () => {
     return {
       commandPaletteVisible: false,
       commandFilterText: "",
-      activeIdx: 0,
-      commandList: [
-        { id: 1, title: "command 1", alias: [], hotkeys: [] },
-        { id: 2, title: "command 2", alias: [], hotkeys: [] },
-        { id: 3, title: "command 3", alias: [], hotkeys: [] },
-      ],
+      activeIdx: -1,
+      commandList: [] as Command[],
     };
   },
 
@@ -29,6 +27,16 @@ export const useCommandStore = defineStore("CommandPalette", {
   },
 
   actions: {
+    registerCommand(command: ICommand) {
+      this.commandList.push({ id: uuid(), ...command });
+    },
+    executeActiveCommand() {
+      if (this.activeIdx >= 0) {
+        this.commandList[this.activeIdx].command?.();
+      }
+      this.commandPaletteVisible = false;
+      this.commandFilterText = "";
+    },
     setCommandFilterText(text: string) {
       this.commandFilterText = text;
     },
