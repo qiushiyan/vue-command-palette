@@ -9,6 +9,7 @@ import "./styles/tailwind.css";
 const routes = [
   { path: "/", component: () => import("./pages/Home.vue") },
   { path: "/about", component: () => import("./pages/About.vue") },
+  { path: "/commands", component: () => import("./pages/Commands.vue") },
 ];
 
 const router = createRouter({

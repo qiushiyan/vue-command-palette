@@ -7,13 +7,13 @@ export const useCommandStore = defineStore("CommandPalette", {
     return {
       commandPaletteVisible: false,
       commandFilterText: "",
-      activeIdx: -1,
+      activeIdx: 0,
       commandList: [] as Command[],
     };
   },
 
   getters: {
-    filteredCommandList: (state) => {
+    filteredCommandList: (state): Command[] => {
       if (state.commandFilterText === "") {
         return state.commandList;
       }
@@ -27,6 +27,14 @@ export const useCommandStore = defineStore("CommandPalette", {
   },
 
   actions: {
+    registerCommands(commands: ICommand[]) {
+      const sortedCommands = commands.sort((a, b) =>
+        a.title < b.title ? -1 : 1
+      );
+      this.commandList = sortedCommands.map((command) => {
+        return { ...command, id: uuid() };
+      });
+    },
     registerCommand(command: ICommand) {
       this.commandList.push({ id: uuid(), ...command });
     },
