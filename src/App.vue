@@ -7,10 +7,12 @@ const router = useRouter();
 const commandStore = useCommandStore()
 commandStore.registerCommand({
   title: 'Home',
+  description: "Navigate to home page",
   command: () => router.push('/'),
 })
 commandStore.registerCommand({
   title: 'About',
+  description: "Navigate to about page",
   command: () => router.push('/about'),
 })
 </script>
