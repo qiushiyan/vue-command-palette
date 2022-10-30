@@ -4,7 +4,7 @@ import { count, increment } from "../counter";
 
 <template>
     <h2>Home page</h2>
-
+    <h2>Press Ctrl + Shift + P to toggle command palette</h2>
     <div class="counter">
         <span>count is </span>
         <button @click="increment">{{ count }}</button>
