@@ -71,6 +71,9 @@ whenever(keys.escape, () => {
                             {{ command.title }}</li>
                     </ul>
                 </div>
+                <footer class="command-palette-footer">
+                    hello
+                </footer>
             </section>
         </div>
 

@@ -32,7 +32,7 @@ export const useCommandStore = defineStore("CommandPalette", {
     },
     executeActiveCommand() {
       if (this.activeIdx >= 0) {
-        this.commandList[this.activeIdx].command?.();
+        this.filteredCommandList[this.activeIdx].command?.();
       }
       this.commandPaletteVisible = false;
       this.commandFilterText = "";

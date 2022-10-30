@@ -7,7 +7,7 @@ const router = useRouter();
 const commandStore = useCommandStore()
 commandStore.registerCommand({
   title: 'Home',
-  command: () => router.push('/home'),
+  command: () => router.push('/'),
 })
 commandStore.registerCommand({
   title: 'About',
