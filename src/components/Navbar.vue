@@ -5,10 +5,10 @@
 <template>
     <nav class="rounded dark:bg-gray-900 w-full">
         <div class="container flex flex-wrap justify-between items-center mx-auto">
-            <a href="/" class="flex items-center">
+            <router-link to="/" class="block pr-4 pl-3 text-white  rounded">
                 <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Command palette
                     demo</span>
-            </a>
+            </router-link>
             <div class="flex md:order-2">
                 <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search"
                     aria-expanded="false"

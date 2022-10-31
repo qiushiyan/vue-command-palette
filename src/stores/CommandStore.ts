@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
-import { v4 as uuid } from "uuid";
 import { Command, ICommand } from "../models/command";
+
+const hashCode = (s: string) => {
+  for (var i = 0, h = 0; i < s.length; i++)
+    h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  return h;
+};
 
 export const useCommandStore = defineStore("CommandPalette", {
   state: () => {
@@ -28,20 +33,31 @@ export const useCommandStore = defineStore("CommandPalette", {
 
   actions: {
     registerCommands(commands: ICommand[]) {
-      const sortedCommands = commands.sort((a, b) =>
-        a.title < b.title ? -1 : 1
-      );
-      this.commandList = sortedCommands.map((command) => {
-        return { ...command, id: uuid() };
+      this.commandList = commands.map((command) => {
+        return { id: hashCode(command.title), priority: 0, ...command };
       });
+      this.sortCommands();
     },
     registerCommand(command: ICommand) {
-      this.commandList.push({ id: uuid(), ...command });
+      this.commandList.push({
+        id: hashCode(command.title),
+        priority: 0,
+        ...command,
+      });
+    },
+    sortCommands() {
+      this.commandList.sort((a, b) => {
+        return b.priority - a.priority || a.title.localeCompare(b.title);
+      });
     },
     executeActiveCommand() {
-      if (this.activeIdx >= 0) {
-        this.filteredCommandList[this.activeIdx].command?.();
+      const activeCommand = this.filteredCommandList[this.activeIdx];
+      if (activeCommand.command) {
+        activeCommand.command();
+        this.filteredCommandList[this.activeIdx]["priority"] += 1;
       }
+      this.sortCommands();
+      this.activeIdx = this.commandList.indexOf(activeCommand);
       this.commandPaletteVisible = false;
       this.commandFilterText = "";
     },
